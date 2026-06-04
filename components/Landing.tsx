@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { Clock, FileX, Globe, ChevronDown, CheckCircle, ChevronUp } from "lucide-react"
+import { Clock, FileX, Globe, ChevronDown, CheckCircle, ChevronUp, Loader2 } from "lucide-react"
 
 /* ================================================================
    REVEAL — fade-in op scroll
@@ -409,12 +409,33 @@ function Pakket() {
                 Neem contact op <span className="arw">→</span>
               </a>
 
+              {/* Cal.com kennismakingsgesprek */}
+              <a
+                href={process.env.NEXT_PUBLIC_CAL_URL ?? "#aanmelden"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-outline pak-btn"
+                style={{ fontSize: 15, padding: "15px 28px", marginTop: 10 }}
+              >
+                Plan een kennismakingsgesprek
+              </a>
+              <p
+                style={{
+                  textAlign: "center",
+                  fontSize: 12.5,
+                  color: "var(--sub)",
+                  marginTop: 8,
+                }}
+              >
+                15 minuten · Gratis · Vrijblijvend
+              </p>
+
               <p
                 style={{
                   textAlign: "center",
                   fontSize: 13,
                   color: "var(--sub)",
-                  marginTop: 16,
+                  marginTop: 14,
                 }}
               >
                 We nemen binnen 24 uur contact op via e-mail
@@ -432,21 +453,46 @@ function Pakket() {
    ================================================================ */
 function Aanmelden() {
   const [email, setEmail] = useState("")
-  const [error, setError] = useState("")
-  const [submitted, setSubmitted] = useState(false)
+  const [bedrijfsnaam, setBedrijfsnaam] = useState("")
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
+  const [fieldError, setFieldError] = useState("")
 
-  function handleSubmit() {
-    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
-    if (!valid) {
-      setError("Vul een geldig e-mailadres in.")
+  async function handleSubmit() {
+    const trimmed = email.trim()
+    if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      setFieldError("Vul een geldig e-mailadres in.")
       return
     }
-    setError("")
-    setSubmitted(true)
-    // Open mailto in background — user stays on page
-    const body = encodeURIComponent(`Aanmelding van: ${email.trim()}`)
-    window.location.href = `mailto:info@startupkraker.nl?subject=Wachtlijst%20Startupkraker&body=${body}`
+    setFieldError("")
+    setStatus("loading")
+
+    try {
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: trimmed, bedrijfsnaam: bedrijfsnaam.trim() }),
+      })
+      const data = await res.json()
+      if (!res.ok || data.error) throw new Error(data.error ?? "Serverfout")
+      setStatus("success")
+    } catch (err) {
+      console.error("[waitlist submit]", err)
+      setStatus("error")
+    }
   }
+
+  const inputStyle = (hasError: boolean): React.CSSProperties => ({
+    width: "100%",
+    background: "var(--surface)",
+    border: `1px solid ${hasError ? "#c0392b" : "var(--border)"}`,
+    borderRadius: 999,
+    padding: "14px 22px",
+    fontSize: 15,
+    color: "var(--fg)",
+    outline: "none",
+    fontFamily: "var(--font-body)",
+    boxSizing: "border-box",
+  })
 
   return (
     <section
@@ -482,7 +528,8 @@ function Aanmelden() {
         </Reveal>
 
         <Reveal>
-          {submitted ? (
+          {status === "success" ? (
+            /* ── Succesmelding ── */
             <div
               style={{
                 display: "inline-flex",
@@ -493,63 +540,84 @@ function Aanmelden() {
                 color: "#c8952a",
                 fontSize: 16,
                 fontWeight: 600,
-                padding: "14px 28px",
+                padding: "16px 32px",
                 borderRadius: 999,
+                animation: "fadeUp .4s ease both",
               }}
             >
-              <CheckCircle size={18} />
-              Gelukt! We nemen snel contact op.
+              <CheckCircle size={20} />
+              ✓ Gelukt! Check je inbox. We nemen binnen 24 uur contact op.
             </div>
           ) : (
-            <div>
-              {/* Inline form */}
-              <div
-                style={{
-                  display: "flex",
-                  gap: 10,
-                  maxWidth: 460,
-                  margin: "0 auto",
-                  flexWrap: "wrap",
-                  justifyContent: "center",
-                }}
-              >
+            /* ── Formulier ── */
+            <div style={{ maxWidth: 460, margin: "0 auto" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {/* E-mail input */}
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) => { setEmail(e.target.value); setError("") }}
+                  onChange={(e) => { setEmail(e.target.value); setFieldError("") }}
                   onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-                  placeholder="jouw@email.nl"
-                  style={{
-                    flex: "1 1 220px",
-                    minWidth: 0,
-                    background: "var(--surface)",
-                    border: `1px solid ${error ? "#c0392b" : "var(--border)"}`,
-                    borderRadius: 999,
-                    padding: "14px 22px",
-                    fontSize: 15,
-                    color: "var(--fg)",
-                    outline: "none",
-                    fontFamily: "var(--font-body)",
-                  }}
+                  placeholder="jouw@bedrijf.nl"
+                  disabled={status === "loading"}
+                  style={inputStyle(!!fieldError)}
+                  aria-label="E-mailadres"
                 />
+
+                {/* Bedrijfsnaam input */}
+                <input
+                  type="text"
+                  value={bedrijfsnaam}
+                  onChange={(e) => setBedrijfsnaam(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+                  placeholder="Bedrijfsnaam (optioneel)"
+                  disabled={status === "loading"}
+                  style={inputStyle(false)}
+                  aria-label="Bedrijfsnaam"
+                />
+
+                {/* Submit knop */}
                 <button
                   onClick={handleSubmit}
+                  disabled={status === "loading"}
                   className="btn btn-primary"
-                  style={{ flexShrink: 0 }}
+                  style={{
+                    justifyContent: "center",
+                    opacity: status === "loading" ? 0.75 : 1,
+                    cursor: status === "loading" ? "not-allowed" : "pointer",
+                  }}
                 >
-                  Aanmelden <span className="arw">→</span>
+                  {status === "loading" ? (
+                    <>
+                      <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} />
+                      Bezig…
+                    </>
+                  ) : (
+                    <>
+                      Aanmelden <span className="arw">→</span>
+                    </>
+                  )}
                 </button>
               </div>
-              {error && (
+
+              {/* Validatiefout */}
+              {fieldError && (
                 <p style={{ marginTop: 10, fontSize: 13, color: "#c0392b" }}>
-                  {error}
+                  {fieldError}
+                </p>
+              )}
+
+              {/* API-fout */}
+              {status === "error" && (
+                <p style={{ marginTop: 10, fontSize: 13, color: "#c0392b" }}>
+                  Er ging iets mis. Probeer het opnieuw.
                 </p>
               )}
             </div>
           )}
         </Reveal>
 
-        {/* Trust line */}
+        {/* Trust-regels */}
         <Reveal>
           <div
             style={{
@@ -568,6 +636,17 @@ function Aanmelden() {
           </div>
         </Reveal>
       </div>
+
+      {/* Keyframes voor succes fade + spinner */}
+      <style>{`
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(10px); }
+          to   { opacity: 1; transform: none; }
+        }
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </section>
   )
 }
