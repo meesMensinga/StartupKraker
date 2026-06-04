@@ -1,9 +1,10 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
+import { Clock, FileX, Globe, ChevronDown, CheckCircle, ChevronUp } from "lucide-react"
 
 /* ================================================================
-   REVEAL COMPONENT
+   REVEAL — fade-in op scroll
    ================================================================ */
 function Reveal({
   children,
@@ -36,7 +37,10 @@ function Reveal({
   }, [])
 
   return (
-    <div ref={ref} className={`reveal${visible ? " in" : ""}${className ? " " + className : ""}`}>
+    <div
+      ref={ref}
+      className={`reveal${visible ? " in" : ""}${className ? " " + className : ""}`}
+    >
       {children}
     </div>
   )
@@ -49,19 +53,37 @@ function Navbar() {
   return (
     <header className="sk-nav tone-dark" data-role="nav">
       <div className="wrap nav-inner">
-        <a href="#" className="logo">
-          startupkraker<span className="star">✳</span>
-        </a>
-        <nav className="nav-links">
-          <a href="#hoe">Hoe het werkt</a>
-          <a href="#pakketten">Pakketten</a>
-          <a href="#contact">Contact</a>
-        </nav>
-        <div>
-          <a href="#pakketten" className="btn btn-primary btn-sm">
-            Start nu <span className="arw">→</span>
+        {/* Logo + beta badge */}
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <a href="#" className="logo">
+            startupkraker<span className="star">✳</span>
           </a>
+          <span
+            style={{
+              background: "#c8952a",
+              color: "#1a1714",
+              fontSize: 11,
+              fontWeight: 700,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              padding: "3px 10px",
+              borderRadius: 999,
+              lineHeight: 1,
+            }}
+          >
+            Beta
+          </span>
         </div>
+
+        {/* Nav links */}
+        <nav className="nav-links">
+          <a href="#hoe-het-werkt">Hoe het werkt</a>
+        </nav>
+
+        {/* CTA */}
+        <a href="#aanmelden" className="btn btn-primary btn-sm">
+          Meld je aan <span className="arw">→</span>
+        </a>
       </div>
     </header>
   )
@@ -76,12 +98,25 @@ function Hero() {
       <div className="hero-orb" />
       <div className="wrap">
         <div className="hero-top">
-          <span className="eyebrow">
-            <span className="tick" />
-            Administratie-abonnement voor ZZP &amp; BV
+          {/* Beta badge */}
+          <span
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              background: "rgba(200,149,42,0.15)",
+              border: "1px solid rgba(200,149,42,0.4)",
+              color: "#c8952a",
+              fontSize: 13,
+              fontWeight: 600,
+              padding: "7px 16px",
+              borderRadius: 999,
+            }}
+          >
+            🚀&nbsp; Vroege toegang — Eerste 20 klanten krijgen maand 1 gratis
           </span>
           <div className="hero-tag">
-            Vanaf <b>€99 / mnd</b>
+            Één pakket · <b>€199 / mnd</b>
             <br />
             Maandelijks opzegbaar
           </div>
@@ -94,16 +129,17 @@ function Hero() {
         </h1>
 
         <p className="hero-sub">
-          <b>Boekhouding, juridisch, salarisadmin en website.</b> Eén factuur
-          per maand. Wij regelen de rompslomp — jij bouwt je bedrijf.
+          Startupkraker regelt je boekhouding, BTW-aangifte, juridische basis en
+          website.{" "}
+          <b>Jij focust op je product. Wij regelen de rest.</b>
         </p>
 
         <div className="hero-cta">
-          <a href="#pakketten" className="btn btn-primary">
-            Start nu <span className="arw">→</span>
+          <a href="#aanmelden" className="btn btn-primary">
+            Meld je aan voor beta <span className="arw">→</span>
           </a>
-          <a href="#pakketten" className="btn btn-outline">
-            Bekijk pakketten
+          <a href="#hoe-het-werkt" className="btn btn-outline">
+            Hoe werkt het?
           </a>
         </div>
 
@@ -112,10 +148,10 @@ function Hero() {
             <span className="ck">✓</span> Geen verborgen kosten
           </span>
           <span className="hero-badge">
-            <span className="ck">✓</span> In 10 minuten gestart
+            <span className="ck">✓</span> Maandelijks opzegbaar
           </span>
           <span className="hero-badge">
-            <span className="ck">✓</span> Maandelijks opzegbaar
+            <span className="ck">✓</span> Persoonlijk aanspreekpunt
           </span>
         </div>
       </div>
@@ -124,50 +160,119 @@ function Hero() {
 }
 
 /* ================================================================
-   PROBLEEM
+   SOCIAAL BEWIJS BALK
+   ================================================================ */
+function SocialProof() {
+  return (
+    <div
+      className="tone-light"
+      style={{
+        borderTop: "1px solid var(--border)",
+        borderBottom: "1px solid var(--border)",
+        background: "var(--surface-2)",
+        padding: "14px 0",
+      }}
+    >
+      <div
+        className="wrap"
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 12,
+          flexWrap: "wrap",
+          textAlign: "center",
+        }}
+      >
+        <span
+          style={{
+            width: 7,
+            height: 7,
+            borderRadius: "50%",
+            background: "#c8952a",
+            display: "inline-block",
+            flexShrink: 0,
+          }}
+        />
+        <span style={{ fontSize: 14, fontWeight: 500, color: "var(--sub)" }}>
+          We zoeken <strong style={{ color: "var(--fg)" }}>20 startups</strong>{" "}
+          om mee te testen — daarna gaan de deuren open
+        </span>
+      </div>
+    </div>
+  )
+}
+
+/* ================================================================
+   HET PROBLEEM
    ================================================================ */
 function Problem() {
+  const cards = [
+    {
+      Icon: Clock,
+      title: "Klok",
+      heading: "Je avonden gaan op aan bonnetjes",
+      body: "BTW-aangifte, facturen najagen, de KvK. Het kost je precies de uren die je in je bedrijf wilde steken.",
+    },
+    {
+      Icon: FileX,
+      title: "Contract",
+      heading: "Eén foute clausule kost je duizenden",
+      body: "Algemene voorwaarden, contracten, AVG. Zonder juridische basis loop je een risico dat je niet ziet aankomen.",
+    },
+    {
+      Icon: Globe,
+      title: "Website",
+      heading: "Je site staat al een jaar stil",
+      body: "Updates, hosting, dat ene formulier dat niet werkt. Onderhoud blijft liggen — tot het misgaat.",
+    },
+  ]
+
   return (
-    <section className="sk-section tone-light" data-role="problem">
+    <section
+      className="sk-section tone-light"
+      id="hoe-het-werkt"
+      data-role="problem"
+    >
       <div className="wrap">
         <Reveal className="section-head">
           <span className="eyebrow">
-            <span className="idx">01</span> Het probleem
+            <span className="idx">01</span> Herken je dit?
           </span>
           <h2 className="display">De administratie houdt je van je werk.</h2>
         </Reveal>
 
         <div className="prob-grid">
-          <Reveal>
-            <div className="prob-card">
-              <div className="pc-num">— Klok</div>
-              <h3>Je avonden gaan op aan bonnetjes</h3>
-              <p>
-                BTW-aangifte, facturen najagen, de KvK. Het kost je precies de
-                uren die je in je bedrijf wilde steken.
-              </p>
-            </div>
-          </Reveal>
-          <Reveal>
-            <div className="prob-card">
-              <div className="pc-num">— Contract</div>
-              <h3>Eén foute clausule kost je duizenden</h3>
-              <p>
-                Algemene voorwaarden, contracten, AVG. Zonder juridische basis
-                loop je een risico dat je niet ziet aankomen.
-              </p>
-            </div>
-          </Reveal>
-          <Reveal>
-            <div className="prob-card">
-              <div className="pc-num">— Website</div>
-              <h3>Je site staat al een jaar stil</h3>
-              <p>
-                Updates, hosting, dat ene formulier dat niet werkt. Onderhoud
-                blijft liggen — tot het misgaat.
-              </p>
-            </div>
-          </Reveal>
+          {cards.map(({ Icon, title, heading, body }) => (
+            <Reveal key={title}>
+              <div className="prob-card">
+                <div
+                  className="pc-num"
+                  style={{ display: "flex", alignItems: "center", gap: 8 }}
+                >
+                  <Icon size={14} style={{ color: "var(--accent)" }} />
+                  {title}
+                </div>
+                <h3>{heading}</h3>
+                <p>{body}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+
+        <div
+          style={{
+            marginTop: 48,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 8,
+            color: "var(--sub)",
+            fontSize: 14,
+          }}
+        >
+          <ChevronDown size={22} style={{ color: "var(--accent)" }} />
+          <span>Dat pakken wij van je over.</span>
         </div>
       </div>
     </section>
@@ -178,55 +283,46 @@ function Problem() {
    HOE HET WERKT
    ================================================================ */
 function HowItWorks() {
+  const steps = [
+    {
+      num: "01",
+      title: "Meld je aan",
+      desc: "Vul je gegevens in. We nemen binnen 24 uur contact op.",
+    },
+    {
+      num: "02",
+      title: "Wij koppelen je team",
+      desc: "Je krijgt een vaste boekhouder en juridisch aanspreekpunt toegewezen.",
+    },
+    {
+      num: "03",
+      title: "Jij bouwt",
+      desc: "Wij sturen maandelijks een update. Jij hoeft niets te doen.",
+    },
+  ]
+
   return (
-    <section className="sk-section tone-light" id="hoe" data-role="how">
+    <section className="sk-section tone-light" data-role="how">
       <div className="wrap">
         <Reveal className="section-head">
           <span className="eyebrow">
-            <span className="idx">02</span> Hoe het werkt
+            <span className="idx">02</span> Drie stappen
           </span>
-          <h2 className="display">
-            Drie stappen. Daarna heb je er geen omkijken meer naar.
-          </h2>
+          <h2 className="display">In drie stappen geregeld.</h2>
         </Reveal>
 
         <div className="steps">
-          <Reveal>
-            <div className="step">
-              <div className="num">
-                <span>01</span>
+          {steps.map((s) => (
+            <Reveal key={s.num}>
+              <div className="step">
+                <div className="num">
+                  <span>{s.num}</span>
+                </div>
+                <h3>{s.title}</h3>
+                <p>{s.desc}</p>
               </div>
-              <h3>Kies je pakket</h3>
-              <p>
-                Solo, Starter BV of Groei. In tien minuten geregeld — geen
-                verkooppraatje.
-              </p>
-            </div>
-          </Reveal>
-          <Reveal>
-            <div className="step">
-              <div className="num">
-                <span>02</span>
-              </div>
-              <h3>Wij koppelen je team</h3>
-              <p>
-                Boekhouder, jurist en webbeheerder. Eén vast aanspreekpunt, geen
-                wisselende krachten.
-              </p>
-            </div>
-          </Reveal>
-          <Reveal>
-            <div className="step">
-              <div className="num">
-                <span>03</span>
-              </div>
-              <h3>Jij bouwt je bedrijf</h3>
-              <p>
-                Wij draaien de rompslomp op de achtergrond. Eén factuur per
-                maand, verder geen gedoe.
-              </p>
-            </div>
-          </Reveal>
+            </Reveal>
+          ))}
         </div>
       </div>
     </section>
@@ -234,164 +330,241 @@ function HowItWorks() {
 }
 
 /* ================================================================
-   PAKKETTEN
+   HET PAKKET
    ================================================================ */
-function Pakketten() {
+const FEATURES = [
+  "Boekhouding bijhouden",
+  "BTW-aangifte (per kwartaal)",
+  "VPB-aangifte (jaarlijks)",
+  "Jaarrekening + KvK deponering",
+  "DGA-loon verwerking",
+  "Juridische standaardcontracten",
+  "Algemene voorwaarden",
+  "Website onderhoud (1 uur per maand)",
+  "Persoonlijk aanspreekpunt",
+  "Maandelijks opzegbaar",
+]
+
+const MAILTO =
+  "mailto:info@startupkraker.nl?subject=Beta%20aanmelding%20Startupkraker&body=Hallo%2C%20ik%20wil%20me%20aanmelden%20voor%20de%20beta%20van%20Startupkraker.%20Mijn%20bedrijfsnaam%20is%3A%20..."
+
+function Pakket() {
   return (
-    <section className="sk-section tone-dark" id="pakketten" data-role="pakketten">
+    <section className="sk-section tone-dark" data-role="pakketten">
       <div className="wrap">
         <Reveal className="section-head">
           <span className="eyebrow">
-            <span className="idx">03</span> Pakketten
+            <span className="idx">03</span> Beta pakket
           </span>
-          <h2 className="display">Eén vast bedrag. Alles erin.</h2>
+          <h2 className="display">Één pakket. Alles inbegrepen.</h2>
           <p className="lede">
-            Geen uurtje-factuurtje, geen verrassingen. Kies wat bij je bedrijf
-            past en stap maandelijks weer uit als het moet.
+            Tijdens de beta werken we met één standaardpakket. Na de beta komen
+            er meer opties.
           </p>
         </Reveal>
 
-        <div className="pak-grid">
-          {/* Solo */}
-          <Reveal>
-            <div className="pak">
-              <div className="tier">Solo</div>
-              <div className="tier-for">Voor ZZP&apos;ers</div>
-              <div className="price">
-                €99<span className="per">/ mnd</span>
-              </div>
-              <ul>
-                <li><span className="ck">✓</span> Boekhouding &amp; BTW-aangifte</li>
-                <li><span className="ck">✓</span> Jaarrekening &amp; IB-aangifte</li>
-                <li><span className="ck">✓</span> Standaard contracten &amp; AVG</li>
-                <li><span className="ck">✓</span> E-mail support binnen 24 uur</li>
-              </ul>
-              <a href="/checkout?plan=solo" className="btn btn-outline pak-btn">
-                Kies Solo
-              </a>
-            </div>
-          </Reveal>
+        {/* Centered single card */}
+        <Reveal>
+          <div
+            style={{
+              maxWidth: 480,
+              margin: "0 auto",
+            }}
+          >
+            <div className="pak feat" style={{ position: "relative" }}>
+              {/* Beta badge */}
+              <div className="pak-badge">Beta prijs — tijdelijk beschikbaar</div>
 
-          {/* Starter BV — featured */}
-          <Reveal>
-            <div className="pak feat">
-              <div className="pak-badge">Meest gekozen</div>
               <div className="tier">Starter BV</div>
               <div className="tier-for">Voor startende BV&apos;s</div>
+
               <div className="price">
                 €199<span className="per">/ mnd</span>
               </div>
-              <ul>
-                <li><span className="ck">✓</span> Alles uit Solo</li>
-                <li><span className="ck">✓</span> Salarisadministratie (tot 3 mensen)</li>
-                <li><span className="ck">✓</span> Juridisch op maat</li>
-                <li><span className="ck">✓</span> Website-onderhoud</li>
-                <li><span className="ck">✓</span> Eén vast aanspreekpunt</li>
-              </ul>
-              <a href="/checkout?plan=starter-bv" className="btn btn-primary pak-btn">
-                Kies Starter BV <span className="arw">→</span>
-              </a>
-            </div>
-          </Reveal>
 
-          {/* Groei */}
-          <Reveal>
-            <div className="pak">
-              <div className="tier">Groei</div>
-              <div className="tier-for">Voor groeiende teams</div>
-              <div className="price">
-                €349<span className="per">/ mnd</span>
-              </div>
+              <p
+                style={{
+                  fontSize: 13.5,
+                  color: "var(--accent)",
+                  fontWeight: 600,
+                  marginBottom: 4,
+                }}
+              >
+                Eerste maand gratis voor de eerste 20 aanmeldingen
+              </p>
+
               <ul>
-                <li><span className="ck">✓</span> Alles uit Starter BV</li>
-                <li><span className="ck">✓</span> Salaris tot 10 mensen</li>
-                <li><span className="ck">✓</span> Kwartaalstrategie &amp; advies</li>
-                <li><span className="ck">✓</span> Prioriteit support binnen 4 uur</li>
-                <li><span className="ck">✓</span> Onbeperkt contracten</li>
+                {FEATURES.map((f) => (
+                  <li key={f}>
+                    <span className="ck">✓</span> {f}
+                  </li>
+                ))}
               </ul>
-              <a href="/checkout?plan=groei" className="btn btn-outline pak-btn">
-                Kies Groei
+
+              <a
+                href={MAILTO}
+                className="btn btn-primary pak-btn"
+                style={{ fontSize: 16, padding: "17px 28px", marginTop: "auto" }}
+              >
+                Neem contact op <span className="arw">→</span>
               </a>
+
+              <p
+                style={{
+                  textAlign: "center",
+                  fontSize: 13,
+                  color: "var(--sub)",
+                  marginTop: 16,
+                }}
+              >
+                We nemen binnen 24 uur contact op via e-mail
+              </p>
             </div>
-          </Reveal>
-        </div>
+          </div>
+        </Reveal>
       </div>
     </section>
   )
 }
 
 /* ================================================================
-   VERGELIJKING
+   AANMELDEN (wachtlijst)
    ================================================================ */
-function Vergelijking() {
+function Aanmelden() {
+  const [email, setEmail] = useState("")
+  const [error, setError] = useState("")
+  const [submitted, setSubmitted] = useState(false)
+
+  function handleSubmit() {
+    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
+    if (!valid) {
+      setError("Vul een geldig e-mailadres in.")
+      return
+    }
+    setError("")
+    setSubmitted(true)
+    // Open mailto in background — user stays on page
+    const body = encodeURIComponent(`Aanmelding van: ${email.trim()}`)
+    window.location.href = `mailto:info@startupkraker.nl?subject=Wachtlijst%20Startupkraker&body=${body}`
+  }
+
   return (
-    <section className="sk-section tone-light" data-role="compare">
-      <div className="wrap">
-        <Reveal className="section-head">
-          <span className="eyebrow">
-            <span className="idx">04</span> Vergelijking
+    <section
+      className="sk-section tone-dark"
+      id="aanmelden"
+      data-role="cta"
+      style={{ paddingTop: 100, paddingBottom: 100 }}
+    >
+      <div className="cta-orb" />
+      <div className="wrap" style={{ textAlign: "center", position: "relative", zIndex: 2 }}>
+        <Reveal>
+          <span className="eyebrow" style={{ marginBottom: 24, display: "inline-flex" }}>
+            <span className="tick" /> Wachtlijst
           </span>
-          <h2 className="display">Reken het zelf na.</h2>
         </Reveal>
 
         <Reveal>
-          <div className="cmp">
-            {/* Header row */}
-            <div className="cmp-row cmp-head">
-              <div className="rowlabel">&nbsp;</div>
-              <div className="feat-col">Startupkraker</div>
-              <div>Zelf doen</div>
-              <div>StartupBoost</div>
-            </div>
+          <h2
+            className="display"
+            style={{ fontSize: "clamp(36px, 4.8vw, 64px)", margin: "0 auto 16px" }}
+          >
+            Zet je naam op de lijst
+          </h2>
+        </Reveal>
 
-            <div className="cmp-row">
-              <div className="rowlabel">Maandprijs</div>
-              <div className="feat-col"><b>vanaf €99</b></div>
-              <div className="muted">je eigen tijd</div>
-              <div className="muted">€325 – €975</div>
-            </div>
+        <Reveal>
+          <p style={{ fontSize: 18, color: "var(--sub)", maxWidth: "44ch", margin: "0 auto 40px" }}>
+            We nemen contact op zodra jouw plek beschikbaar is.{" "}
+            <strong style={{ color: "var(--fg)" }}>
+              Geen spam, geen verplichtingen.
+            </strong>
+          </p>
+        </Reveal>
 
-            <div className="cmp-row">
-              <div className="rowlabel">Boekhouding &amp; BTW</div>
-              <div className="feat-col"><span className="ck">✓</span> inbegrepen</div>
-              <div className="muted">zelf of los inhuren</div>
-              <div><span className="ck">✓</span> inbegrepen</div>
+        <Reveal>
+          {submitted ? (
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 10,
+                background: "rgba(200,149,42,0.15)",
+                border: "1px solid rgba(200,149,42,0.4)",
+                color: "#c8952a",
+                fontSize: 16,
+                fontWeight: 600,
+                padding: "14px 28px",
+                borderRadius: 999,
+              }}
+            >
+              <CheckCircle size={18} />
+              Gelukt! We nemen snel contact op.
             </div>
+          ) : (
+            <div>
+              {/* Inline form */}
+              <div
+                style={{
+                  display: "flex",
+                  gap: 10,
+                  maxWidth: 460,
+                  margin: "0 auto",
+                  flexWrap: "wrap",
+                  justifyContent: "center",
+                }}
+              >
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => { setEmail(e.target.value); setError("") }}
+                  onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+                  placeholder="jouw@email.nl"
+                  style={{
+                    flex: "1 1 220px",
+                    minWidth: 0,
+                    background: "var(--surface)",
+                    border: `1px solid ${error ? "#c0392b" : "var(--border)"}`,
+                    borderRadius: 999,
+                    padding: "14px 22px",
+                    fontSize: 15,
+                    color: "var(--fg)",
+                    outline: "none",
+                    fontFamily: "var(--font-body)",
+                  }}
+                />
+                <button
+                  onClick={handleSubmit}
+                  className="btn btn-primary"
+                  style={{ flexShrink: 0 }}
+                >
+                  Aanmelden <span className="arw">→</span>
+                </button>
+              </div>
+              {error && (
+                <p style={{ marginTop: 10, fontSize: 13, color: "#c0392b" }}>
+                  {error}
+                </p>
+              )}
+            </div>
+          )}
+        </Reveal>
 
-            <div className="cmp-row">
-              <div className="rowlabel">Juridisch &amp; contracten</div>
-              <div className="feat-col"><span className="ck">✓</span> inbegrepen</div>
-              <div className="muted">los, €150+/uur</div>
-              <div className="muted">beperkt</div>
-            </div>
-
-            <div className="cmp-row">
-              <div className="rowlabel">Salarisadministratie</div>
-              <div className="feat-col"><span className="ck">✓</span> vanaf Starter BV</div>
-              <div className="muted">apart pakket</div>
-              <div><span className="ck">✓</span> inbegrepen</div>
-            </div>
-
-            <div className="cmp-row">
-              <div className="rowlabel">Website-onderhoud</div>
-              <div className="feat-col"><span className="ck">✓</span> inbegrepen</div>
-              <div className="muted">zelf of bureau</div>
-              <div className="no">✕ niet beschikbaar</div>
-            </div>
-
-            <div className="cmp-row">
-              <div className="rowlabel">Eén vast aanspreekpunt</div>
-              <div className="feat-col"><span className="ck">✓</span> altijd</div>
-              <div className="no">—</div>
-              <div className="muted">wisselend</div>
-            </div>
-
-            <div className="cmp-row">
-              <div className="rowlabel">Opzegtermijn</div>
-              <div className="feat-col"><b>maandelijks</b></div>
-              <div className="no">—</div>
-              <div className="muted">jaarcontract</div>
-            </div>
+        {/* Trust line */}
+        <Reveal>
+          <div
+            style={{
+              display: "flex",
+              gap: 32,
+              justifyContent: "center",
+              flexWrap: "wrap",
+              marginTop: 28,
+              fontSize: 13.5,
+              color: "var(--sub)",
+            }}
+          >
+            <span>🔒 Geen spam</span>
+            <span>📩 Reactie binnen 24u</span>
+            <span>❌ Altijd opzegbaar</span>
           </div>
         </Reveal>
       </div>
@@ -404,24 +577,24 @@ function Vergelijking() {
    ================================================================ */
 const FAQ_ITEMS = [
   {
-    q: "Kan ik echt maandelijks opzeggen?",
-    a: "Ja. Geen jaarcontract, geen opzegboete. Zeg je op, dan loopt je maand gewoon af en krijg je je hele administratie netjes overgedragen.",
+    q: "Wanneer start de beta?",
+    a: "We starten zodra we 20 geschikte bedrijven hebben gevonden. Meld je aan en we houden je op de hoogte.",
   },
   {
-    q: "Wat als ik al een boekhouder heb?",
-    a: "Dan nemen we het soepel over, of we werken samen tot de overdracht rond is. Jij merkt er onderweg niets van.",
+    q: "Voor wie is dit geschikt?",
+    a: "Voor Nederlandse BV's in de eerste 3 jaar. Geen personeel of maximaal 5 medewerkers. Hoofdzakelijk tech, creatief of dienstverlening.",
   },
   {
-    q: "Zijn er verborgen kosten?",
-    a: "Nee. De maandprijs is precies wat je betaalt. Werk dat buiten je pakket valt stemmen we vooraf met je af — nooit achteraf op de factuur.",
+    q: "Wat kost het na de beta?",
+    a: "Het beta-pakket blijft €199/mnd. Na de beta breiden we uit met meer pakketten. Beta-klanten behouden hun prijs.",
   },
   {
-    q: "Voor wie is dit bedoeld?",
-    a: "ZZP'ers en kleine BV's tot ongeveer tien medewerkers. Net gestart of al een paar jaar bezig: zolang administratie je tijd opslokt, passen wij.",
+    q: "Wie doet mijn boekhouding?",
+    a: "We werken met gecertificeerde boekhouders (NOAB/RB-geregistreerd). Je krijgt één vast aanspreekpunt, geen callcenter.",
   },
   {
-    q: "Hoe snel ben ik gestart?",
-    a: "Binnen tien minuten aangemeld. De koppelingen en machtigingen regelen wij meestal binnen twee werkdagen.",
+    q: "Kan ik tussentijds stoppen?",
+    a: "Ja, maandelijks opzegbaar. Geen boetes, geen minimale looptijd.",
   },
 ]
 
@@ -433,9 +606,9 @@ function FAQ() {
       <div className="wrap">
         <Reveal className="section-head">
           <span className="eyebrow">
-            <span className="idx">05</span> Veelgestelde vragen
+            <span className="idx">04</span> Vragen
           </span>
-          <h2 className="display">Eerlijk antwoord, geen kleine lettertjes.</h2>
+          <h2 className="display">Veelgestelde vragen.</h2>
         </Reveal>
 
         <Reveal>
@@ -474,82 +647,60 @@ function FAQ() {
 }
 
 /* ================================================================
-   CTA BAND
-   ================================================================ */
-function CTABand() {
-  return (
-    <section className="sk-cta tone-dark" id="contact" data-role="cta">
-      <div className="cta-orb" />
-      <div className="wrap">
-        <Reveal>
-          <span className="eyebrow" style={{ marginBottom: 28, display: "inline-flex" }}>
-            <span className="tick" /> Klaar voor de start
-          </span>
-        </Reveal>
-        <Reveal>
-          <h2 className="display">Klaar om te stoppen met administreren?</h2>
-        </Reveal>
-        <Reveal>
-          <p>
-            Start vandaag. In tien minuten geregeld, maandelijks opzegbaar — wij
-            doen de rest.
-          </p>
-        </Reveal>
-        <Reveal>
-          <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginTop: 8 }}>
-            <a href="#pakketten" className="btn btn-primary">
-              Start nu <span className="arw">→</span>
-            </a>
-            <a href="#pakketten" className="btn btn-outline">
-              Bekijk pakketten
-            </a>
-          </div>
-        </Reveal>
-      </div>
-    </section>
-  )
-}
-
-/* ================================================================
    FOOTER
    ================================================================ */
 function Footer() {
   return (
     <footer className="sk-footer tone-dark" data-role="footer">
       <div className="wrap">
-        <div className="foot-top">
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1.6fr 1fr 1fr",
+            gap: 40,
+            paddingBottom: 56,
+          }}
+        >
+          {/* Brand */}
           <div className="foot-brand">
             <a href="#" className="logo">
               startupkraker<span className="star">✳</span>
             </a>
-            <p>Stop met administreren. Begin met ondernemen.</p>
+            <p>Één factuur. Alles geregeld.</p>
           </div>
 
+          {/* Links */}
           <div className="foot-col">
-            <h4>Product</h4>
-            <a href="#hoe">Hoe het werkt</a>
-            <a href="#pakketten">Pakketten</a>
-            <a href="#vergelijking">Vergelijking</a>
+            <h4>Pagina</h4>
+            <a href="#hoe-het-werkt">Hoe het werkt</a>
+            <a href="#aanmelden">Beta pakket</a>
+            <a href="#aanmelden">Aanmelden</a>
           </div>
 
+          {/* Contact */}
           <div className="foot-col">
-            <h4>Bedrijf</h4>
-            <a href="#">Over ons</a>
-            <a href="#contact">Contact</a>
-            <a href="#">Vacatures</a>
-          </div>
-
-          <div className="foot-col">
-            <h4>Juridisch</h4>
-            <a href="#">Voorwaarden</a>
-            <a href="#">Privacy</a>
-            <a href="#">KvK 87654321</a>
+            <h4>Contact</h4>
+            <a href="mailto:info@startupkraker.nl">info@startupkraker.nl</a>
           </div>
         </div>
 
         <div className="foot-bottom">
-          <span>© 2026 Startupkraker B.V.</span>
-          <span>Gemaakt in Amsterdam</span>
+          <span>© 2026 Startupkraker · Nog in beta · Rotterdam, Nederland</span>
+          <span
+            style={{
+              background: "rgba(200,149,42,0.15)",
+              border: "1px solid rgba(200,149,42,0.3)",
+              color: "#c8952a",
+              fontSize: 11,
+              fontWeight: 700,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              padding: "4px 10px",
+              borderRadius: 999,
+            }}
+          >
+            Beta
+          </span>
         </div>
       </div>
     </footer>
@@ -565,12 +716,12 @@ export default function Landing() {
       <Navbar />
       <main>
         <Hero />
+        <SocialProof />
         <Problem />
         <HowItWorks />
-        <Pakketten />
-        <Vergelijking />
+        <Pakket />
+        <Aanmelden />
         <FAQ />
-        <CTABand />
       </main>
       <Footer />
     </>
